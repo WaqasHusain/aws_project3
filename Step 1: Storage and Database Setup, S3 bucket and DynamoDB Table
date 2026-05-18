@@ -1,0 +1,87 @@
+Storage and Database Setup: S3 bucket and DynamoDB Table
+Steps to be Performed:
+1- Setup S3 Buckets for Receipt Storage and Archiving.
+2- Create a DynamoDB Table to Store Extracted Receipt Data.
+
+#1 Set Up S3 Buckets for Receipt Storage and Archiving:
+
+The receipt processing system needs a central, secure location to store both the original receipt files and track their processing status.
+Amazon S3 (Simple Storage Service) provides the ideal solution with its durability, availability, and security features. This bucket will serve as both the entry point for new receipts and the archive for processed documents.
+
+Sign in to the AWS Management Console
+Navigate to the Amazon S3 service
+Click "Create bucket"
+This will open the bucket creation wizard
+The bucket will store all your receipt files
+Select “Bucket type” as General purpose
+Enter a unique bucket name (e.g., "automated-receipts-yourusername")
+Note: S3 bucket names must be globally unique across all AWS accounts
+Best practice: Include your username or organization name to ensure uniqueness
+
+Important: Keep all default settings for the bucket configuration
+
+Do not change any of the default options for:
+Object Ownership
+Block Public Access settings
+Bucket Versioning
+Tags
+Default encryption
+Advanced settings
+Click "Create bucket"
+AWS will validate your settings and create the bucket
+You'll be redirected to the S3 buckets list where your new bucket should appear
+
+Create an organizational folder (Recommended)
+Navigate into your newly created bucket
+Click "Create folder" and name it "incoming" for new receipt uploads
+This folder help organize receipts by processing status
+
+The S3 bucket serves as both the starting point and archive for the receipt processing workflow:
+Users or systems upload receipt images/PDFs to the "incoming" folder
+These uploads automatically trigger the Lambda function
+The system maintains the original documents for audit purposes while extracting their data
+
+#2 Create a DynamoDB Table to Store Extracted Receipt Data:
+
+After extracting structured data from receipts, the system needs a scalable, high-performance database to store this information.
+DynamoDB is an ideal choice for this application because it provides consistent single-digit millisecond response times at any scale, without the need to manage database servers or worry about capacity planning.
+
+Navigate to DynamoDB in the AWS Console
+Click "Create table"
+This opens the table creation interface
+The table will store all extracted receipt data in a structured format
+
+Configure the table basics
+Table name: Enter "Receipts"
+Partition key: Enter "receipt_id" and select "String" type
+This will be a unique identifier for each receipt
+Generated automatically by the processing Lambda function
+Sort key: Enter "date" and select "String" type
+This allows you to query later on, by date or date ranges
+Format will be "YYYY-MM-DD" for consistent sorting
+
+Review and create
+Leave default settings for the rest of the options
+Click "Create table"
+AWS will provision your table (this typically takes less than a minute)
+
+DynamoDB Table Setup
+After creating your "Receipts" table in DynamoDB:
+
+The table will initially show "No items" as seen in the screenshot
+Items will only appear after:
+
+Receipt files are uploaded to the S3 "incoming" folder
+The Lambda function processes these uploads
+Extracted data is stored in this DynamoDB table
+
+This empty state is normal and indicates the table is ready to receive data once the workflow begins.
+Data Model for Receipt Information
+The DynamoDB table will store the following attributes for each receipt:
+
+The DynamoDB table serves as the structured data repository for all processed receipts:
+The Lambda function extracts data from receipts using Amazon Textract
+The extracted data is formatted according to the data model
+The Lambda function writes this data to the DynamoDB table
+Applications and reports can query the table for receipt information
+The original receipt images remain in S3, linked via the receipt_url attribute.
