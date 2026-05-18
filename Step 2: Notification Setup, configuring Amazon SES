@@ -1,0 +1,61 @@
+Notification Setup: Configuring Amazon SES
+
+Steps to be Performed:
+
+1- Setting up SES for Email Notifications.
+2- Verifying the Email Address.
+3- Configuring SES for Receipt Notifications.
+
+#1 Setting up SES for Email Notifications:
+After receipts are processed, users need to be notified about the extracted information and any actions required.
+Amazon Simple Email Service (SES) provides a reliable, cost-effective email solution for sending these notifications. Setting up SES ensures that appropriate stakeholders are informed when new receipts are processed.
+Navigate to Amazon SES in the AWS Console
+
+Access Identity Management
+In the SES console, go to Configuration > Identities
+This section is where you'll verify email addresses or domains
+
+Begin Identity Creation
+Click the Create identity button
+This starts the process of verifying an email address or domain for sending
+
+Select Identity Type
+Select Email address option
+Note: For production systems, you might want to verify an entire domain instead
+
+Configure Sender Email
+Enter your sender email address (the address you'll send notifications from)
+Best practice: Use a business email or a dedicated notification address
+Example: receipts-noreply@yourcompany.com﻿
+Complete Initial Setup
+Click Create identity
+AWS will process your request and prepare verification
+
+#2 Verifying the Email Address:
+After creating the identity, navigate to your Gmail inbox and perform the verification steps as provided below:
+
+Verify Sender Email
+AWS will send a verification email to the address you provided
+This verification ensures you own the email address
+Check both inbox and spam/junk folders for this email
+
+Complete Verification
+Go to the inbox of that email address and find the AWS verification email
+Click the verification link in that email
+You'll be redirected to a confirmation page in AWS
+
+#3 Configuring SES for Receipt Notifications:
+Important: Email Verification Options
+Option 1: Use the same email for sender and recipient (simplest approach)
+Verify only one email address to use for both sending and receiving notifications
+This is recommended for tutorial and testing purposes
+
+Option 2: Use different sender and recipient emails
+Repeat steps 1 and 2 for each recipient email address
+Remember: While in SES sandbox mode, both sender and recipient emails must be verified
+The SES configuration enables the notification component of the receipt processing workflow:
+
+After the Lambda function processes a receipt and stores data in DynamoDB
+It uses SES to send an email notification with receipt details
+The notification includes key information like vendor, date, amount, and a link to the original receipt
+Users receive timely updates without needing to check the system manually.
