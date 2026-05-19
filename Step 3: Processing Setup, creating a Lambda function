@@ -1,0 +1,7 @@
+Steps to be Performed
+
+1- Create an IAM role for AWS Lambda.
+2- Create a Lambda Function.
+3- Add the Lambda function Code.
+4- Understand the Lambda function Code.
+
