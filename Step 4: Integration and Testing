@@ -4,3 +4,108 @@ Steps to be Performed:
 2- Test the Project Execution.
 3- Project Improvement Ideas.
 
+#1 Setup S3 Event Notification Trigger:
+
+For our receipt processing system to operate automatically, we need to establish a trigger that will invoke our Lambda function whenever a new receipt is uploaded.
+Amazon S3 offers event notifications that can detect new file uploads and trigger specific actions. This integration creates the vital connection between file upload (input) and processing (execution).
+
+Navigate to S3 in the AWS Console
+
+Access Your Bucket
+From the list of buckets, select the receipt storage bucket you created earlier
+This opens the bucket management interface
+
+Access Properties Settings
+Navigate to the "Properties" tab at the top of the bucket management interface
+This tab contains various bucket configurations
+
+Create Event Notification
+Scroll down to the "Event Notifications" section
+Click "Create event notification" to begin configuration
+This opens the event notification creation form
+
+Configure Event Details
+Name: "ReceiptUploadEvent"
+Prefix (optional): "incoming/" (if using folders)
+Suffix (optional): Leave blank or add ".pdf,.jpg,.jpeg,.png"
+
+Event types: Check "All object create events"
+This includes put, post, copy, and multipart upload completions
+Keep the rest of the boxes unchecked
+Ensures any method of adding files triggers the process
+
+Destination: Select "Lambda Function"
+Lambda function: Select "ReceiptProcessor"
+This connects the S3 event to your processing function
+Save the Configuration
+Review all settings to ensure they match your requirements
+Click "Save" to activate the event notification
+AWS will validate and create the notification configuration
+
+
+The S3 event notification creates the automated workflow for receipt processing:
+
+When a receipt image is uploaded to S3, it generates an event
+The event notification system detects this upload event
+If the file matches the configured prefix and suffix filters, S3 invokes the Lambda function
+The Lambda function receives event data including the bucket name and file key
+Processing begins automatically without any manual intervention
+
+#2 Test the Project Execution:
+This point explains how to verify your receipt processing system works correctly end-to-end.
+
+Step 1: Upload a Test Receipt
+Navigate to your S3 bucket in the AWS Console
+Upload a receipt from this folder: Receipts (to the "incoming" folder if you created one)
+Wait 10-15 seconds for processing to complete
+
+Step 2: Monitor the Lambda Execution
+Go to Lambda > Functions > ReceiptProcessor
+Select the "Monitor" tab
+
+
+Check that your function was recently invoked
+Note: It may take a few minutes for the Lambda execution to appear in the monitoring dashboard. If you don't see your execution immediately, wait 2-3 minutes and refresh the page.
+❗Important: Uploading a receipt in Step 1 is mandatory to trigger the Lambda function execution.
+
+
+
+Click "View logs in CloudWatch" for detailed execution logs
+
+What to Look For:
+
+You may encounter this error: 'Log group '/aws/lambda/ReceiptProcessor' does not exist for account ID '211125755223''
+This occurs because the CloudWatch log group isn't created until your Lambda function runs for the first time. To resolve:
+
+Upload a receipt to trigger your Lambda function
+Wait 2-3 minutes
+Refresh the CloudWatch Logs page
+Successful function invocation
+
+Log entries showing processing steps
+Any error messages that need attention
+
+Step 3: Verify Data in DynamoDB
+
+Go to DynamoDB > Tables > Receipts
+Select the "Items" tab
+Look for your recently processed receipt
+Check:
+Receipt data is stored correctly
+Key fields (vendor, date, total amount) are accurate
+
+
+Line items were extracted properly
+
+Step 4: Check Email Notifications
+Open your configured recipient email account
+
+Find the email with subject "Receipt Processed: [vendor] - $[total]"
+Verify the receipt details in the email body
+
+Troubleshooting Tips
+No Lambda trigger? Check S3 event configuration
+Processing errors? Review CloudWatch logs
+Missing data? Examine text extraction results
+Next Steps
+After successful testing, try processing multiple receipts with different formats to ensure robustness before deploying the system for regular use.
