@@ -21,7 +21,11 @@ This project is estimated to take about 2 hours
 Cost: Free (AWS Free Tier Eligible)
 
 Steps to be performed:
-Storage and Database Setup: S3 bucket and DynamoDB Table
-Notification Setup: Configuring Amazon SES
-Processing Setup: Creating a Lambda function
-Integration and Testing
+
+- Storage and Database Setup: S3 bucket and DynamoDB Table
+
+- Notification Setup: Configuring Amazon SES
+
+- Processing Setup: Creating a Lambda function
+
+- Integration and Testing
